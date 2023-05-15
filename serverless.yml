@@ -1,0 +1,39 @@
+service: S3ListenForCreate
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: us-east-1
+  role: arn:aws:iam::233784350905:role/addPersonAdmin
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+        - s3:*
+      Resource: '*'
+
+functions:
+  S3ListenForCreate:
+    handler: src/functions/S3ListenForCreate.handler
+    events:
+      - s3:
+          bucket: any-file-type-upload # --> if this bucket does not exist, it creates it.
+          event: s3:ObjectCreated:*
+
+  uploadAnyFile:
+    handler: src/functions/uploadAnyFile.handler
+    events:
+      - http:
+          path: /anyfile-upload
+          method: post
+          cors:
+            origin: '*' 
+            headers: 
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+
