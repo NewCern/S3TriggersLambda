@@ -57,7 +57,7 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
             Body: buffer,
             Key: key,
             ContentType: body.mime,
-            Bucket: "any-file-type-upload",
+            Bucket: "upload-any-file-type",
         })
             .promise();
         const response = {
