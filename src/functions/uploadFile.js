@@ -40,14 +40,10 @@ const s3 = new AWS.S3();
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const body = JSON.parse(event.body);
-        if (!body) {
-            return {
-                statusCode: 400,
-                message: 'Missing File!',
-            };
-        }
-        let fileItem = body.file;
-        const buffer = Buffer.from(fileItem, 'base64');
+        let xmlData = body.xml;
+        // convert to a sequence of base64 string
+        const buffer = Buffer.from(xmlData, 'base64');
+        // get file type of buffer object
         const fileInfo = yield fileType.fromBuffer(buffer);
         const detectedExt = fileInfo === null || fileInfo === void 0 ? void 0 : fileInfo.ext;
         const name = (0, uuid_1.v4)();
@@ -58,6 +54,8 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
             Key: key,
             ContentType: body.mime,
             Bucket: "upload-any-file-type",
+            // Bucket: process.env.xmlUploadBucket!, 
+            // ACL: 'public-read',
         })
             .promise();
         const response = {
@@ -74,7 +72,12 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         return {
             statusCode: 500,
-            message: error
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                'Access-Control-Allow-Methods': 'OPTIONS,POST'
+            },
+            body: JSON.stringify({ message: 'There was an error uploading file' })
         };
     }
 });

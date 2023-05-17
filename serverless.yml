@@ -1,3 +1,46 @@
+# service: LambdaListenForS3CreateAnyFile
+
+# provider:
+#   name: aws
+#   runtime: nodejs16.x
+#   region: us-east-1
+#   role: arn:aws:iam::233784350905:role/addPersonAdmin
+#   iamRoleStatements:
+#     - Effect: Allow
+#       Action:
+#         - dynamodb:*
+#         - s3:*
+#       Resource: '*'
+
+# custom:
+#   anyFileTypeBucket: upload-any-file-type
+
+# functions:
+#   uploadAnyFile:
+#     handler: src/functions/uploadAnyFile.handler
+#     events:
+#       - http:
+#           path: /upload-any-file
+#           method: post
+#           cors:
+#             origin: '*' 
+#             headers: 
+#               - Content-Type
+#               - X-Amz-Date
+#               - Authorization
+#               - X-Api-Key
+#               - X-Amz-Security-Token
+#               - X-Amz-User-Agent
+#             allowCredentials: false
+
+#   S3ListenForCreate:
+#     handler: src/functions/S3ListenForCreate.handler
+#     events:
+#       - s3:
+#           bucket: ${self:custom.anyFileTypeBucket}
+#           event: s3:ObjectCreated:*
+
+
 service: LambdaListenForS3CreateAnyFile
 
 provider:
@@ -13,18 +56,18 @@ provider:
       Resource: '*'
 
 custom:
-  anyFileTypeBucket: upload-any-file-type
+  xmlFileBucket: upload-any-file-type
 
 functions:
-  uploadAnyFile:
-    handler: src/function/uploadAnyFile.handler
+  uploadFile:
+    handler: src/functions/uploadFile.handler
     events:
       - http:
-          path: /upload-any-file
+          path: /file-upload
           method: post
           cors:
-            origin: '*' 
-            headers: 
+            origin: '*' # <-- Specify allowed origin
+            headers: # <-- Specify allowed headers
               - Content-Type
               - X-Amz-Date
               - Authorization
@@ -37,6 +80,8 @@ functions:
     handler: src/functions/S3ListenForCreate.handler
     events:
       - s3:
-          bucket: ${self:custom.anyFileTypeBucket}
+          bucket: ${self:custom.xmlFileBucket}
           event: s3:ObjectCreated:*
+
+
 

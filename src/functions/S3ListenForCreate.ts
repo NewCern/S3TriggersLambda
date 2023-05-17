@@ -1,7 +1,7 @@
 import { S3Handler } from 'aws-lambda';
 import { S3EventRecord } from 'aws-lambda/trigger/s3';
 
-export const S3ListenForCreate: S3Handler = async (event): Promise<any> => {
+export const handler: S3Handler = async (event): Promise<any> => {
   try {
     // Process the S3 create event
     const records: S3EventRecord[] = event.Records;

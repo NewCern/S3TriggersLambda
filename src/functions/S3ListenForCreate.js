@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.S3ListenForCreate = void 0;
-const S3ListenForCreate = (event) => __awaiter(void 0, void 0, void 0, function* () {
+exports.handler = void 0;
+const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Process the S3 create event
         const records = event.Records;
@@ -38,4 +38,4 @@ const S3ListenForCreate = (event) => __awaiter(void 0, void 0, void 0, function*
         };
     }
 });
-exports.S3ListenForCreate = S3ListenForCreate;
+exports.handler = handler;

@@ -3,18 +3,13 @@ import { v4 as uuid } from 'uuid';
 import * as AWS from 'aws-sdk';
 
 const s3 = new AWS.S3();
-
 export const handler = async (event: any): Promise<any> => {
     try {
         const body = JSON.parse(event.body);
-        if(!body){
-            return {
-                statusCode: 400,
-                message: 'Missing File!',
-            };
-        }
-        let fileItem = body.file;
-        const buffer = Buffer.from(fileItem, 'base64');
+        let xmlData = body.xml;
+        // convert to a sequence of base64 string
+        const buffer = Buffer.from(xmlData, 'base64');
+        // get file type of buffer object
         const fileInfo = await fileType.fromBuffer(buffer);
         const detectedExt = fileInfo?.ext;
 
@@ -22,13 +17,15 @@ export const handler = async (event: any): Promise<any> => {
         const key = `${name}.${detectedExt}`;
 
         await s3
-        .putObject({
-            Body: buffer,
-            Key: key,
-            ContentType: body.mime,
-            Bucket: "upload-any-file-type"!,
-        })
-        .promise();
+            .putObject({
+                Body: buffer,
+                Key: key,
+                ContentType: body.mime,
+                Bucket: "upload-any-file-type"!,
+                // Bucket: process.env.xmlUploadBucket!, 
+                // ACL: 'public-read',
+            })
+            .promise();
         const response = {
             statusCode: 200,
             headers: {
@@ -39,10 +36,15 @@ export const handler = async (event: any): Promise<any> => {
             body: JSON.stringify({ message: 'File has been successfully uploaded' })
             };
             return response;
-    } catch(error){
+    } catch (error) {
         return {
             statusCode: 500,
-            message: error
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+                'Access-Control-Allow-Methods': 'OPTIONS,POST'
+            },
+            body: JSON.stringify({ message: 'There was an error uploading file' })
         }
     }
-}
+};
