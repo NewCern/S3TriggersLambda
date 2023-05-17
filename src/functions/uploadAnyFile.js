@@ -58,8 +58,6 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
             Key: key,
             ContentType: body.mime,
             Bucket: "any-file-type-upload",
-            // Bucket: process.env.xmlUploadBucket!, 
-            // ACL: 'public-read',
         })
             .promise();
         const response = {

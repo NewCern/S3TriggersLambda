@@ -12,19 +12,15 @@ provider:
         - s3:*
       Resource: '*'
 
-functions:
-  S3ListenForCreate:
-    handler: src/functions/S3ListenForCreate.handler
-    events:
-      - s3:
-          bucket: any-file-type-upload # --> if this bucket does not exist, it creates it.
-          event: s3:ObjectCreated:*
+custom:
+  anyFileTypeBucket: upload-any-file-type
 
+functions:
   uploadAnyFile:
-    handler: src/functions/uploadAnyFile.handler
+    handler: src/function/uploadAnyFile.handler
     events:
       - http:
-          path: /anyfile-upload
+          path: /upload-any-file
           method: post
           cors:
             origin: '*' 
@@ -36,4 +32,11 @@ functions:
               - X-Amz-Security-Token
               - X-Amz-User-Agent
             allowCredentials: false
+
+  S3ListenForCreate:
+    handler: src/functions/S3ListenForCreate.handler
+    events:
+      - s3:
+          bucket: ${self:custom.anyFileTypeBucket}
+          event: s3:ObjectCreated:*
 
