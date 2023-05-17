@@ -1,4 +1,4 @@
-service: S3ListenForCreate
+service: LambdaListenForS3CreateAnyFile
 
 provider:
   name: aws
